@@ -37,7 +37,7 @@ dextr_args.add_argument('threshold', location='json', type=int, default=80)
 
 
 @api.route('/dextr/<int:image_id>')
-class MaskRCNN(Resource):
+class DEXTR(Resource):
 
     @login_required
     @api.expect(dextr_args)

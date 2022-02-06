@@ -34,7 +34,8 @@ class MaskRCNN():
             config=self.config
         )
         try:
-            self.model.load_weights(COCO_MODEL_PATH, by_name=True)
+            self.model.load_weights(COCO_MODEL_PATH, by_name=True, 
+                exclude=[ "mrcnn_class_logits", "mrcnn_bbox_fc", "mrcnn_bbox", "mrcnn_mask"])
             self.model.keras_model._make_predict_function()
             logger.info(f"Loaded MaskRCNN model: {COCO_MODEL_PATH}")
         except:

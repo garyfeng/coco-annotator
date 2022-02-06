@@ -17,6 +17,8 @@ services:
     environment:
       - SECRET_KEY=RandomSecretKeyHere
       - FILE_WATCHER=true
+      - MASK_RCNN_FILE=/models/mask_rcnn_coco.h5
+      - MASK_RCNN_CLASSES=BG,person
     volumes:
       - "./datasets:/datasets"
       - "./models:/models"
@@ -30,6 +32,7 @@ services:
     image: jsbroks/coco-annotator:workers-stable
     volumes:
       - "./datasets:/datasets"
+      - "./models:/models"
     depends_on:
       - messageq
       - database
