@@ -154,6 +154,20 @@
                 </div>
               </div>
 
+              <div v-if="stats.users" class="card my-3 p-3 shadow-sm col-6 mr-2">
+                <h6 class="border-bottom border-gray pb-2"><b>Annotations per User</b></h6>
+                <h6 class="row border-bottom border-gray pb-2">
+                    <span class="col-4">Username</span>
+                    <span class="col-4">Annotations</span>
+                    <span class="col-4">Images</span>
+                </h6>
+                <div class="row" v-for="stat in Object.keys(stats.users)">
+                  <strong class="col-4">{{stat}}:</strong>
+                  <span class="col-4">{{stats.users[stat]["annotations"].toFixed(0)}}</span>
+                  <span class="col-4">{{stats.users[stat]["images"].toFixed(0)}}</span>
+                </div>
+              </div>
+
             </div>
             
           </div>
@@ -418,6 +432,11 @@
                   :typeahead-activation-threshold="0"
                 ></TagsInput>
               </div>
+              <div>
+                <input type="checkbox" class="form-check-input"
+                  v-model="exporting.with_empty_images">
+                <label class="form-check-label">export with not annotated images</label>
+              </div>
             </form>
           </div>
           <div class="modal-footer">
@@ -514,6 +533,7 @@ export default {
       exporting: {
         categories: [],
         progress: 0,
+        with_empty_images: false,
         id: null
       },
       selected: {
@@ -637,7 +657,7 @@ export default {
     },
     exportCOCO() {
       $("#exportDataset").modal("hide");
-      Dataset.exportingCOCO(this.dataset.id, this.exporting.categories)
+      Dataset.exportingCOCO(this.dataset.id, this.exporting.categories, this.exporting.with_empty_images)
         .then(response => {
           let id = response.data.id;
           this.exporting.id = id;

@@ -1,5 +1,5 @@
 from flask import request
-from flask_restplus import Namespace, Resource, reqparse
+from flask_restplus import Namespace, Resource, reqparse, inputs
 from flask_login import login_required, current_user
 from werkzeug.datastructures import FileStorage
 from mongoengine.errors import NotUniqueError
@@ -46,6 +46,7 @@ coco_upload.add_argument('coco', location='files', type=FileStorage, required=Tr
 
 export = reqparse.RequestParser()
 export.add_argument('categories', type=str, default=None, required=False, help='Ids of categories to export')
+export.add_argument('with_empty_images', type=inputs.boolean, default=False, required=False, help='Export with un-annotated images')
 
 update_dataset = reqparse.RequestParser()
 update_dataset.add_argument('categories', location='json', type=list, help="New list of categories")
@@ -179,6 +180,23 @@ class DatasetStats(Resource):
         # Calculate annotation counts by category in this dataset
         category_count = dict()
         image_category_count = dict()
+
+
+
+        user_stats = dict()
+
+        for user in dataset.get_users():
+            user_annots = AnnotationModel.objects(dataset_id=dataset_id, deleted=False, creator=user.username)
+            image_count = dict()
+            for annot in user_annots:
+                image_count[annot.image_id] = image_count.get(annot.image_id, 0) + 1
+
+            user_stats[user.username] = {
+                "annotations":  len(user_annots),
+                "images": len(image_count)
+            }
+
+
         for category in dataset.categories:
 
             # Calculate the annotation count in the current category in this dataset
@@ -207,7 +225,8 @@ class DatasetStats(Resource):
                 'Time (ms) per Annotation': annotations.average('milliseconds') or 0
             },
             'categories': category_count,
-            'images_per_category': image_category_count
+            'images_per_category': image_category_count,
+            'users': user_stats
         }
         return stats
 
@@ -497,6 +516,7 @@ class DatasetExport(Resource):
 
         args = export.parse_args()
         categories = args.get('categories')
+        with_empty_images = args.get('with_empty_images', False)
         
         if len(categories) == 0:
             categories = []
@@ -509,7 +529,7 @@ class DatasetExport(Resource):
         if not dataset:
             return {'message': 'Invalid dataset ID'}, 400
         
-        return dataset.export_coco(categories=categories)
+        return dataset.export_coco(categories=categories, with_empty_images=with_empty_images)
     
     @api.expect(coco_upload)
     @login_required
