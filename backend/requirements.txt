@@ -1,9 +1,10 @@
+scikit-learn==0.24
 eventlet==0.24.1
 opencv-python==4.0.0.21
 flask==1.0.2
 flask-cors==3.0.7
 flask-login==0.4.1
-flask-restplus==0.12.1
+flask_restx
 flask-mongoengine==0.9.5
 numpy
 cython

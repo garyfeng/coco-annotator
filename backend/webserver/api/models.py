@@ -1,4 +1,4 @@
-from flask_restplus import Namespace, Resource, reqparse
+from flask_restx import Namespace, Resource, reqparse
 from werkzeug.datastructures import FileStorage
 from imantics import Mask
 from flask_login import login_required

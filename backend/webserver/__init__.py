@@ -14,7 +14,9 @@ from database import (
 from flask import Flask
 from flask_cors import CORS
 from flask_socketio import SocketIO
-from werkzeug.contrib.fixers import ProxyFix
+# contrib is deprecated in 1.0 see https://werkzeug.palletsprojects.com/en/2.0.x/changes/#version-1-0-0
+# from werkzeug.contrib.fixers import ProxyFix
+from werkzeug.middleware.proxy_fix import ProxyFix
 
 from celery import Celery
 

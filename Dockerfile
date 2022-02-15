@@ -18,7 +18,10 @@ FROM jsbroks/coco-annotator:python-env
 
 WORKDIR /workspace/
 COPY ./backend/ /workspace/
-COPY ./.git /workspace/.git
+# when using coco-annotation as a git subtree, there is no .git folder
+# in this subrepo; unclear what the .git will do, so let's see if we can do without it.
+# COPY ./.git /workspace/.
+
 RUN python set_path.py
 
 COPY --from=build-stage /workspace/client/dist /workspace/dist
