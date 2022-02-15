@@ -19,6 +19,7 @@ services:
       - FILE_WATCHER=true
       - NAME=Test Annotator
       - MASK_RCNN_FILE=/models/mask_rcnn_coco.h5
+      - MASK_RCNN_CLASSES=BG,person      
       # # Default coco classes (order matters)
       - MASK_RCNN_CLASSES=
          BG,person,bicycle,car,motorcycle,airplane,
